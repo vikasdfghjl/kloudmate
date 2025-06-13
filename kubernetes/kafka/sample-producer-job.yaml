@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kafka-sample-producer
+  namespace: kloudmate
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: producer
+        image: bitnami/kafka:latest
+        command:
+        - /bin/bash
+        - -c
+        - |
+          echo "Creating topic 'demo-topic'..."
+          kafka-topics.sh --create --topic demo-topic --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1 --if-not-exists
+          
+          echo "Sending sample messages..."
+          for i in {1..10}; do
+            MESSAGE="Demo message $i - $(date) - Random: $RANDOM"
+            echo "$MESSAGE" | kafka-console-producer.sh --bootstrap-server kafka:9092 --topic demo-topic
+            echo "Sent: $MESSAGE"
+            sleep 2
+          done
+          
+          echo "Done! Messages sent to 'demo-topic'"

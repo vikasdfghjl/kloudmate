@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dice-app
+  namespace: kloudmate
+  labels:
+    app: dice-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dice-app  
+  template:
+    metadata:
+      labels:
+        app: dice-app
+    spec:
+      containers:
+      - name: dice-app
+        image: vikasdfghjl/dice-server:latest
+        imagePullPolicy: Always 
+        ports:
+        - containerPort: 8081
+          name: http
+          protocol: TCP
+        env:        
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-collector-service.kloudmate.svc.cluster.local:4317"
+        - name: OTEL_SERVICE_NAME
+          value: "dice-server"
+        - name: OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED
+          value: "true"
+        - name: FLASK_APP
+          value: "app.py"        
+        - name: FLASK_ENV
+          value: "production"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10

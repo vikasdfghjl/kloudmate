@@ -120,36 +120,15 @@ kubectl exec -it kafka-controller-0 -n kloudmate -- kafka-topics.sh \
 ## Troubleshooting
 
 ```bash
-# Check pod status and events
-kubectl describe pod <pod-name> -n kloudmate
-kubectl get events -n kloudmate --sort-by='.lastTimestamp'
-```
-
-```bash
-kubectl logs <pod-name> -n kloudmate
-
-
 # Test connectivity
 kubectl exec -it <kafka-controller-pod> -n kloudmate -- \
   kafka-topics.sh --list --bootstrap-server localhost:9092
-
-
-# Verify collector is receiving data
-kubectl logs deployment/otel-collector -n kloudmate | grep "dice-server"
-
-# Check pod status
-kubectl describe pod <pod-name>
-
-# Check service endpoints
-kubectl get endpoints
 
 # Check logs
 kubectl logs <pod-name> -f
 ```
 
 ### Network Connectivity Test
-
-Test KloudMate connectivity from cluster:
 
 ```bash
 kubectl run test-connectivity --rm -i --tty --image=curlimages/curl -- \
@@ -161,20 +140,6 @@ kubectl run test-connectivity --rm -i --tty --image=curlimages/curl -- \
 
 **Expected response:** `200 OK` with `{"partialSuccess":{}}`
 
-## Cleanup
-
-To remove the entire setup:
-
-```bash
-# Remove Kafka
-helm uninstall kafka -n kloudmate
-
-# Remove all Kubernetes resources
-kubectl delete namespace kloudmate
-```
-
----
-
 ### Using kubectl port-forward
 
 ```bash
@@ -182,4 +147,12 @@ kubectl delete namespace kloudmate
 kubectl port-forward service/dice-app-service 8081:8081
 
 # Access at http://localhost:8081/rolldice
+```
+
+## Cleanup
+
+```bash
+helm uninstall kafka -n kloudmate
+
+kubectl delete namespace kloudmate
 ```

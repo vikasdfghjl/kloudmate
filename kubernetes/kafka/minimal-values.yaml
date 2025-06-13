@@ -1,7 +1,4 @@
-# Minimal Kafka KRaft Setup - Single Node
-# This node acts as both controller and broker
 
-# Enable KRaft mode (no ZooKeeper)
 kraft:
   enabled: true
 
@@ -17,18 +14,14 @@ controller:
     limits:
       memory: 512Mi
       cpu: 500m
-  # Make this controller also handle broker traffic
   controllerOnly: false
 
-# Disable separate broker nodes (controller handles this)
 broker:
   replicaCount: 0
 
-# Ensure ZooKeeper is disabled
 zookeeper:
   enabled: false
 
-# Disable authentication for simplicity
 auth:
   clientProtocol: plaintext
   interBrokerProtocol: plaintext
@@ -37,25 +30,20 @@ auth:
   tls:
     enabled: false
 
-# Service configuration
 service:
   type: ClusterIP
   
-# Disable external access for minimal setup
 externalAccess:
   enabled: false
 
-# Minimal JVM settings
 heapOpts: "-Xmx256m -Xms256m"
 
-# Enable JMX for metrics collection (demo)
 metrics:
   jmx:
     enabled: true
     service:
       port: 9999
 
-# Additional security settings - disable all authentication
 listeners:
   client:
     protocol: PLAINTEXT
@@ -64,6 +52,5 @@ listeners:
   interbroker:
     protocol: PLAINTEXT
 
-# Disable SASL completely
 sasl:
   enabled: false

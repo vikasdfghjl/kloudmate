@@ -1,13 +1,8 @@
 # OpenTelemetry Setup with Flask App and Kafka on Kubernetes
 
-Tstep-by-step instructions to deploy a complete observability stack including Flask application, OpenTelemetry Collector, and Kafka cluster.
+ instructions to deploy a complete observability stack including Flask application, OpenTelemetry Collector, and Kafka cluster.
 
-## 📋 Prerequisites
-
-- **kubectl** configured and connected to your cluster
-- **Helm** installed for Kafka deployment
-
-### Step 1: Create Namespace
+## Step 1: Create Namespace
 
 ```bash
 kubectl create namespace kloudmate

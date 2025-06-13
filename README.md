@@ -78,13 +78,6 @@ kafka-sample-producer-xxxxx       0/1     Completed   0          1m
 kubectl get svc -n kloudmate
 ```
 
-**Expected services:**
-
-- `dice-app-service` (Flask app)
-- `kafka` (Kafka broker)
-- `kafka-controller-headless` (Kafka service)
-- `otel-collector-service` (OTel Collector)
-
 ### Test Flask Application
 
 ```bash
@@ -94,59 +87,6 @@ kubectl port-forward -n kloudmate svc/dice-app-service 5000:8081
 # In another terminal, test the endpoints
 curl http://localhost:5000/rolldice  # Dice roll endpoint
 curl http://localhost:5000/health    # Health check
-```
-
-### Verify OpenTelemetry Collection
-
-```bash
-# Check collector logs for telemetry data
-kubectl logs -n kloudmate deployment/otel-collector | head -20
-
-# Look for export logs
-kubectl logs -n kloudmate deployment/otel-collector | grep -i "traces\|metrics\|logs"
-```
-
-### Test Kafka
-
-```bash
-# Check Kafka controller logs
-kubectl logs kafka-controller-0 -n kloudmate
-
-# Test topic creation
-kubectl exec -it kafka-controller-0 -n kloudmate -- kafka-topics.sh \
-  --list --bootstrap-server localhost:9092
-```
-
-## Troubleshooting
-
-```bash
-# Test connectivity
-kubectl exec -it <kafka-controller-pod> -n kloudmate -- \
-  kafka-topics.sh --list --bootstrap-server localhost:9092
-
-# Check logs
-kubectl logs <pod-name> -f
-```
-
-### Network Connectivity Test
-
-```bash
-kubectl run test-connectivity --rm -i --tty --image=curlimages/curl -- \
-  curl -v https://otel.kloudmate.com:4318/v1/traces \
-  -H "Authorization: <YOUR_API_KEY>" \
-  -H "Content-Type: application/json" \
-  -d '{"test":"connectivity"}'
-```
-
-**Expected response:** `200 OK` with `{"partialSuccess":{}}`
-
-### Using kubectl port-forward
-
-```bash
-# Forward dice-app port
-kubectl port-forward service/dice-app-service 8081:8081
-
-# Access at http://localhost:8081/rolldice
 ```
 
 ## Cleanup
